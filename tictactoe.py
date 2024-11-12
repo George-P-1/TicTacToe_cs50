@@ -23,12 +23,12 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    if board == initial_state():
+    if board == initial_state():    # REVIEW - Initial state is probably included in the else part below
         return X    # NOTE - Always starts with X 
     elif sum(1 if element==EMPTY else 0 for row in board for element in row) % 2 == 0:
         return O    # O plays when there are even number of empty cells
     else:
-        return X
+        return X    # X plays when there are odd number of empty cells
 
 
 def actions(board):
@@ -41,7 +41,6 @@ def actions(board):
             if element == EMPTY:
                 empty_cells.append((i, j))
     return empty_cells
-
 
 
 def result(board, action):
@@ -60,6 +59,7 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
+    # REVIEW - Checking for horizontal and vertical can be done in the same for loop maybe
     # Check horizontally
     for row in board:
         if row[0] == row[1] == row[2] and row[0] != EMPTY:
@@ -81,21 +81,36 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    # game over if someone won
+    if winner(board) != None:
+        return True
+    # if any cell is empty, game not over
+    for row in board:
+        for element in row:
+            if element == EMPTY:
+                return False
+    # All cells filled
+    return True
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    winning_player = winner(board)
+    if winning_player == X:
+        return 1
+    elif winning_player == O:
+        return -1
+    else:
+        return 0
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    if terminal(board):         # NOTE - (End of recursion) If end state then return the final score
+    if terminal(board):         # NOTE - (End of recursion) If terminal state then return the final score
         return utility(board)
     if player(board) == X:      # NOTE - X is maximizing player
         value = -math.inf       # Initialize variable in order to find highest possible score
