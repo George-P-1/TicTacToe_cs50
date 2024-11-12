@@ -110,15 +110,21 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    if terminal(board):         # NOTE - (End of recursion) If terminal state then return the final score
-        return utility(board)
+    if terminal(board):         # If terminal state then return no action
+        return None
+    optimal_action = None
     if player(board) == X:      # NOTE - X is maximizing player
         value = -math.inf       # Initialize variable in order to find highest possible score
         for action in actions(board):
-            value = max(value, minimax(result(board, action)))
-        raise NotImplementedError
+            prev_val = value
+            value = max(value, utility(result(board, action)))
+            if value > prev_val:        # update to variable to optimal action
+                optimal_action = action
     elif player(board) == O:    # NOTE - O is minimizing player
         value = math.inf        # Initialize variable in order to find lowest possible score
         for action in actions(board):
-            value = min(value, minimax(result(board, action)))
-        raise NotImplementedError
+            prev_val = value
+            value = min(value, utility(result(board, action)))
+            if value < prev_val:        # update to variable to optimal action
+                optimal_action = action
+    return optimal_action
