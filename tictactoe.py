@@ -116,35 +116,32 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board. and minimax score that was chosen (-1, 0 or 1).
     """
-    if terminal(board):
-        raise Exception("Shouldn't ever reach this part of code.")
-    # Check which player
+
+    # in the last state where only 2 empty cell is available
     optimal_action = None
-    if player(board) == X:      # NOTE = Maximizing player
-        best_val = -math.inf         # Variable that should hold the score that corresponds to optimal action
+    if player(board) == X:      # X is maximizing player
+        best_val = -1
         for action in actions(board):
-            curr_val = helper(board, action)
-            best_val = max(best_val, curr_val)
-            if best_val > curr_val:
-                optimal_action = action
-        return optimal_action
-    elif player(board) == O:    # NOTE - Minimizing player
-        best_val = math.inf
+            new_board = result(board, action)
+            if not terminal(new_board):
+                return minimax(new_board)
+            else:
+                val = utility(new_board)
+                if val > best_val:
+                    best_val = val
+                    optimal_action = action
+    elif player(board) == O:        # O is minimizing player
+        best_val = 1
         for action in actions(board):
-            curr_val = helper(board, action)
-            best_val = min(best_val, curr_val)
-            if best_val < curr_val:
-                optimal_action = action
-        return optimal_action
-
-
-def helper(board, action):
-    """
-    Returns the minimax score of the resulting board when an action is taken
-    """
-    current_board = result(board, action)
-    # if board is in terminal state
-    if terminal(current_board):
-        return utility(board)
+            new_board = result(board, action)
+            if not terminal(new_board):
+                return minimax(new_board)
+            else:
+                val = utility(new_board)
+                if val < best_val:
+                    best_val = val
+                    optimal_action = action
     else:
-        return minimax(current_board)
+        # A terminal board shouldn't be given to minimax
+        raise NotImplementedError
+    return optimal_action
