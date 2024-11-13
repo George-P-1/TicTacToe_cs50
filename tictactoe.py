@@ -106,42 +106,44 @@ def utility(board):
         return 0
 
 
-# REMOVE_LATER - I think the AI/algorithm is not smart cuz it only looks one move ahead since there is no recursion
-# REMOVE_LATER - utility() only returns a valid value if board is in terminal state. Otherwise it returns a 0 
-# which is not useful information for the algorithm.
-# REMOVE_LATER - The algorithm at least works a little because sometimes the optimal move is the action that corresponds to
-# when the utility() function returns the default 0 value. 
-# REVIEW - Can also initialize the best_val variable with the least desirable value instead of infinites
 def minimax(board):
     """
-    Returns the optimal action for the current player on the board. and minimax score that was chosen (-1, 0 or 1).
+    Returns the optimal action for the current player on the board
     """
-
-    # in the last state where only 2 empty cell is available
-    optimal_action = None
-    if player(board) == X:      # X is maximizing player
-        best_val = -1
-        for action in actions(board):
-            new_board = result(board, action)
-            if not terminal(new_board):
-                return minimax(new_board)
-            else:
-                val = utility(new_board)
-                if val > best_val:
-                    best_val = val
-                    optimal_action = action
-    elif player(board) == O:        # O is minimizing player
-        best_val = 1
-        for action in actions(board):
-            new_board = result(board, action)
-            if not terminal(new_board):
-                return minimax(new_board)
-            else:
-                val = utility(new_board)
-                if val < best_val:
-                    best_val = val
-                    optimal_action = action
-    else:
-        # A terminal board shouldn't be given to minimax
-        raise NotImplementedError
+    optimal_action, _ = helper(board)
     return optimal_action
+
+        
+def helper(board):
+    """
+    Returns optimal action and utility score.
+    Recursive function to find optimal action that corresponds to optimal utility score (-1, 0 or 1).
+    """
+    # if terminal state then return utility score
+    if terminal(board):
+        return None, utility(board)
+    
+    # X is maximizing player, O is minimizing player
+    current_player = player(board)
+    optimal_action = None
+    
+    # Initialize best value based on player type
+    if current_player == X:
+        best_value = -math.inf
+        # Loop through all possible actions and choose the one with the max value
+        for action in actions(board):
+            _ , action_value = helper(result(board, action))
+            if action_value > best_value:
+                best_value = action_value
+                optimal_action = action
+        return optimal_action, best_value
+    
+    elif current_player == O:
+        best_value = math.inf
+        # Loop through all possible actions and choose the one with the min value
+        for action in actions(board):
+            _ , action_value = helper(result(board, action))
+            if action_value < best_value:
+                best_value = action_value
+                optimal_action = action
+        return optimal_action, best_value
