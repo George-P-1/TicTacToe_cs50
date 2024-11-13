@@ -111,25 +111,40 @@ def utility(board):
 # which is not useful information for the algorithm.
 # REMOVE_LATER - The algorithm at least works a little because sometimes the optimal move is the action that corresponds to
 # when the utility() function returns the default 0 value. 
+# REVIEW - Can also initialize the best_val variable with the least desirable value instead of infinites
 def minimax(board):
     """
-    Returns the optimal action for the current player on the board.
+    Returns the optimal action for the current player on the board. and minimax score that was chosen (-1, 0 or 1).
     """
-    if terminal(board):         # If terminal state then return no action
-        return None
+    if terminal(board):
+        raise Exception("Shouldn't ever reach this part of code.")
+    # Check which player
     optimal_action = None
-    if player(board) == X:      # NOTE - X is maximizing player
-        value = -math.inf       # Initialize variable in order to find highest possible score
+    if player(board) == X:      # NOTE = Maximizing player
+        best_val = -math.inf         # Variable that should hold the score that corresponds to optimal action
         for action in actions(board):
-            prev_val = value
-            value = max(value, utility(result(board, action)))
-            if value > prev_val:        # update to variable to optimal action
+            curr_val = helper(board, action)
+            best_val = max(best_val, curr_val)
+            if best_val > curr_val:
                 optimal_action = action
-    elif player(board) == O:    # NOTE - O is minimizing player
-        value = math.inf        # Initialize variable in order to find lowest possible score
+        return optimal_action
+    elif player(board) == O:    # NOTE - Minimizing player
+        best_val = math.inf
         for action in actions(board):
-            prev_val = value
-            value = min(value, utility(result(board, action)))
-            if value < prev_val:        # update to variable to optimal action
+            curr_val = helper(board, action)
+            best_val = min(best_val, curr_val)
+            if best_val < curr_val:
                 optimal_action = action
-    return optimal_action
+        return optimal_action
+
+
+def helper(board, action):
+    """
+    Returns the minimax score of the resulting board when an action is taken
+    """
+    current_board = result(board, action)
+    # if board is in terminal state
+    if terminal(current_board):
+        return utility(board)
+    else:
+        return minimax(current_board)
