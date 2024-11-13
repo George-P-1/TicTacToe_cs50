@@ -106,6 +106,11 @@ def utility(board):
         return 0
 
 
+# REMOVE_LATER - I think the AI/algorithm is not smart cuz it only looks one move ahead since there is no recursion
+# REMOVE_LATER - utility() only returns a valid value if board is in terminal state. Otherwise it returns a 0 
+# which is not useful information for the algorithm.
+# REMOVE_LATER - The algorithm at least works a little because sometimes the optimal move is the action that corresponds to
+# when the utility() function returns the default 0 value. 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
