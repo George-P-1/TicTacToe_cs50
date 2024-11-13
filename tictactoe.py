@@ -108,23 +108,42 @@ def utility(board):
 
 def minimax(board):
     """
-    Returns the optimal action for the current player on the board.
+    Returns the optimal action for the current player on the board
     """
-    if terminal(board):         # If terminal state then return no action
-        return None
-    optimal_action = None
-    if player(board) == X:      # NOTE - X is maximizing player
-        value = -math.inf       # Initialize variable in order to find highest possible score
-        for action in actions(board):
-            prev_val = value
-            value = max(value, utility(result(board, action)))
-            if value > prev_val:        # update to variable to optimal action
-                optimal_action = action
-    elif player(board) == O:    # NOTE - O is minimizing player
-        value = math.inf        # Initialize variable in order to find lowest possible score
-        for action in actions(board):
-            prev_val = value
-            value = min(value, utility(result(board, action)))
-            if value < prev_val:        # update to variable to optimal action
-                optimal_action = action
+    optimal_action, _ = helper(board)
     return optimal_action
+
+        
+def helper(board):
+    """
+    Returns optimal action and utility score.
+    Recursive function to find optimal action that corresponds to optimal utility score (-1, 0 or 1).
+    """
+    # if terminal state then return utility score
+    if terminal(board):
+        return None, utility(board)
+    
+    # X is maximizing player, O is minimizing player
+    current_player = player(board)
+    optimal_action = None
+    
+    # Initialize best value based on player type
+    if current_player == X:
+        best_value = -math.inf
+        # Loop through all possible actions and choose the one with the max value
+        for action in actions(board):
+            _ , action_value = helper(result(board, action))
+            if action_value > best_value:
+                best_value = action_value
+                optimal_action = action
+        return optimal_action, best_value
+    
+    elif current_player == O:
+        best_value = math.inf
+        # Loop through all possible actions and choose the one with the min value
+        for action in actions(board):
+            _ , action_value = helper(result(board, action))
+            if action_value < best_value:
+                best_value = action_value
+                optimal_action = action
+        return optimal_action, best_value
