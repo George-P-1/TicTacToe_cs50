@@ -59,15 +59,14 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    # REVIEW - Checking for horizontal and vertical can be done in the same for loop maybe
-    # Check horizontally
-    for row in board:
-        if row[0] == row[1] == row[2] and row[0] != EMPTY:
-            return row[0]
-    # Check vertically
+    # Iterate through the 3x3 board to check for winner
     for i in range(3):
+        # Check vertically
         if board[0][i] == board[1][i] == board[2][i] and board[0][i] != EMPTY:
             return board[0][i]
+        # Check horizontally
+        if board[i][0] == board[i][1] == board[i][2] and board[i][0] != EMPTY:
+            return board[i][0]
     # Check diagonally
     if board[0][0] == board[1][1] == board[2][2] and board[0][0] != EMPTY:
         return board[0][0]
@@ -136,6 +135,8 @@ def helper(board):
             if action_value > best_value:
                 best_value = action_value
                 optimal_action = action
+            if best_value == 1:   # If we find an optimal (maximal) move, return it. Reduces computation.
+                return optimal_action, best_value
         return optimal_action, best_value
     
     elif current_player == O:
@@ -146,4 +147,6 @@ def helper(board):
             if action_value < best_value:
                 best_value = action_value
                 optimal_action = action
+            if best_value == -1:    # If we find an optimal (minimal) move, return it. Reduces computation.
+                return optimal_action, best_value
         return optimal_action, best_value
