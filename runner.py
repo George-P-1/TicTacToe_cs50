@@ -21,10 +21,13 @@ user = None
 board = ttt.initial_state()
 ai_turn = False
 
+number_of_actions_checked = 0
+
 while True:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            print(f"Number of actions checked: {number_of_actions_checked}")
             sys.exit()
 
     screen.fill(black)
@@ -112,7 +115,8 @@ while True:
         if user != player and not game_over:
             if ai_turn:
                 time.sleep(0.5)
-                move = ttt.minimax(board)
+                move, num_now = ttt.minimax(board)
+                number_of_actions_checked += num_now
                 board = ttt.result(board, move)
                 ai_turn = False
             else:

@@ -48,6 +48,7 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     if action not in actions(board):
+        print(action)
         raise Exception("Invalid action")
     # NOTE - Make copy cuz minimax uses this function to simulate future moves. So won't change original board.
     board_copy = copy.deepcopy(board)
@@ -109,18 +110,19 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board
     """
-    optimal_action, _ = helper(board)
-    return optimal_action
+    num_of_actions = 0
+    optimal_action, _ , num_of_actions = helper(board, num_of_actions)
+    return optimal_action, num_of_actions
 
         
-def helper(board):
+def helper(board, num_of_actions):
     """
     Returns optimal action and utility score.
     Recursive function to find optimal action that corresponds to optimal utility score (-1, 0 or 1).
     """
     # if terminal state then return utility score
     if terminal(board):
-        return None, utility(board)
+        return None, utility(board), num_of_actions
     
     # X is maximizing player, O is minimizing player
     current_player = player(board)
@@ -131,22 +133,24 @@ def helper(board):
         best_value = -math.inf
         # Loop through all possible actions and choose the one with the max value
         for action in actions(board):
-            _ , action_value = helper(result(board, action))
+            num_of_actions += 1
+            _ , action_value, num_of_actions = helper(result(board, action), num_of_actions)
             if action_value > best_value:
                 best_value = action_value
                 optimal_action = action
-            if best_value == 1:   # If we find an optimal (maximal) move, return it. Reduces computation.
-                return optimal_action, best_value
-        return optimal_action, best_value
+            # if best_value == 1:   # If we find an optimal (maximal) move, return it. Reduces computation.
+            #     return optimal_action, best_value, num_of_actions
+        return optimal_action, best_value, num_of_actions
     
     elif current_player == O:
         best_value = math.inf
         # Loop through all possible actions and choose the one with the min value
         for action in actions(board):
-            _ , action_value = helper(result(board, action))
+            num_of_actions += 1
+            _ , action_value, num_of_actions = helper(result(board, action), num_of_actions)
             if action_value < best_value:
                 best_value = action_value
                 optimal_action = action
-            if best_value == -1:    # If we find an optimal (minimal) move, return it. Reduces computation.
-                return optimal_action, best_value
-        return optimal_action, best_value
+            # if best_value == -1:    # If we find an optimal (minimal) move, return it. Reduces computation.
+            #     return optimal_action, best_value, num_of_actions
+        return optimal_action, best_value, num_of_actions
